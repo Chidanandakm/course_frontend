@@ -4,6 +4,8 @@ import useForm from '../lib/useForm'
 import Form from './styles/Form';
 import { useMutation } from '@apollo/client';
 import DisplayError from './ErrorMessage';
+import { ALL_PRODUCTS_QUERY } from './Products';
+import Router from 'next/router';
 
 
 const CREATE_PRODUCT_MUTATION = gql`
@@ -23,8 +25,8 @@ mutation CREATE_PRODUCT_MUTATION(
     }) {
       id
       price
-      name
       description
+      name
     }
   }
 `;
@@ -32,24 +34,27 @@ mutation CREATE_PRODUCT_MUTATION(
 
 
 const CreateProduct = () => {
-    const { inputs, handleChange } = useForm({
+    const { inputs, handleChange, clearForm, resetForm } = useForm({
         image: '',
         name: '',
-        price: 0,
+        price: null,
         description: '',
     })
 
     const [createProduct, { loading, error, data }] = useMutation(CREATE_PRODUCT_MUTATION, {
         variables: inputs,
+        refetchQueries: [{ query: ALL_PRODUCTS_QUERY }]
     })
 
 
     return (
         <Form onSubmit={async (e) => {
             e.preventDefault();
-            console.log(inputs);
-            const res = await createProduct();
-            console.log(res);
+            //uploading to database
+            const { data } = await createProduct();
+            clearForm()
+            //redirecting to products page
+            Router.push({ pathname: `/product/${data.createProduct.id}` })
         }}
         >
             <DisplayError error={error} />
@@ -58,6 +63,7 @@ const CreateProduct = () => {
                     Image
                     <input type="file"
                         id="image"
+                        name="image"
                         required
                         onChange={handleChange}
                     />
@@ -74,7 +80,7 @@ const CreateProduct = () => {
                 </label>
                 <label htmlFor="price">
                     Price
-                    <input type="text"
+                    <input type="number"
                         id="name"
                         name="price"
                         placeholder="Price"
