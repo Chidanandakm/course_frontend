@@ -1,10 +1,3 @@
-import Products from "../components/Products";
+export { default } from './products'
 
 
-export default function Home() {
-  return (
-    <div >
-      <Products/>
-    </div>
-  )
-}
