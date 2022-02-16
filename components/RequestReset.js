@@ -1,10 +1,8 @@
 import { useMutation } from '@apollo/client';
 import gql from 'graphql-tag';
-import React from 'react';
 import Form from './styles/Form'
 import useForm from '../lib/useForm'
-import { CURRENT_USER_QUERY } from './User'
-import DisplayError from './ErrorMessage';
+import Error from './ErrorMessage';
 
 const REQUEST_RESET_MUTATION = gql`
     mutation REQUEST_RESET_MUTATION($email: String!){
@@ -17,7 +15,7 @@ const REQUEST_RESET_MUTATION = gql`
 
 const RequestReset = () => {
 
-    const { inputs, handleChange, clearForm, resetForm } = useForm({
+    const { inputs, handleChange, resetForm } = useForm({
         email: '',
     });
 
@@ -26,26 +24,26 @@ const RequestReset = () => {
 
         // refetchQueries: [{ query: CURRENT_USER_QUERY }]
     })
-    if(loading) return <p>Loading...</p>
+    if (loading) return <p>Loading...</p>
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        await signup().catch(error.message);
+        await signup();
 
         resetForm();
 
     };
 
-    
+
 
     return (
         <Form method="POST" onSubmit={handleSubmit}>
             <h2>Request a Password Reset</h2>
-            <DisplayError error={error} />
+            <Error error={error} />
             <fieldset>
                 {
-                    data?.sendUserPasswordResetLink && (<p>
+                    data?.sendUserPasswordResetLink === null && (<p>
                         Success! Check your Email for the link
                     </p>)
                 }
