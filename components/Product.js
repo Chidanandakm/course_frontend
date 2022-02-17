@@ -5,6 +5,7 @@ import Link from 'next/link';
 import PriceTag from './styles/PriceTag';
 import millify from 'millify';
 import DeleteProduct from './DeleteProduct';
+import AddToCart from './AddToCart';
 
 const Product = ({ product }) => {
   return (
@@ -18,6 +19,7 @@ const Product = ({ product }) => {
             pathname:'update',
             query: {id: product.id}
           }}>Edit</Link>
+          <AddToCart id={product.id}/>
           <DeleteProduct id={product.id}>Delete</DeleteProduct>
         </div>
     </Item>

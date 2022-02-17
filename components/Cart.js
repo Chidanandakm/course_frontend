@@ -4,6 +4,11 @@ import Supreme from './styles/Supreme';
 import styled from 'styled-components';
 import millify from 'millify';
 import calcTotalPrice from '../lib/calcTotalPrice';
+import { useCart } from '../lib/cartState';
+import CloseButton from './styles/CloseButton';
+import RemoveFromCart from './RemoveFromCart';
+import gql from 'graphql-tag';
+import { useMutation } from '@apollo/client';
 
 const CartItemStyles = styled.li`
   padding: 1rem 0;
@@ -19,32 +24,49 @@ const CartItemStyles = styled.li`
   }
 `;
 
+
+
 const CartItem = ({ cartItem }) => {
-    return <CartItemStyles>
-        <img width="100" src={cartItem.product.photo.image.publicUrlTransformed} alt={cartItem.product.name} />
-        <div>
-           <h3> {cartItem.product.name}</h3>
-           <p>
-               {millify(cartItem.product.price * cartItem.quantity)}
-               -
-               {<em>{cartItem.quantity} &times; {millify(cartItem.product.price)} each</em>}
-            </p>
-        </div>
-    </CartItemStyles>;
+
+
+    const { product } = cartItem;
+  if (!product) return null;
+  return (
+    <CartItemStyles>
+      <img
+        width="100"
+        src={product.photo.image.publicUrlTransformed}
+        alt={product.name}
+      />
+      <div>
+        <h3>{product.name}</h3>
+        <p>
+          {millify(product.price * cartItem.quantity)}-
+          <em>
+            {cartItem.quantity} &times; {millify(product.price)} each
+          </em>
+        </p>
+      </div>
+      <RemoveFromCart id={cartItem.id}/>
+    </CartItemStyles>
+  );
 }
 
 const Cart = () => {
     const me = useUser();
+    const { cartOpen, closeCart } = useCart();
+
     if(!me) return null;
-    console.log(me);
-  return (
-    <CartStyles open>
+
+    return (
+    <CartStyles open={cartOpen}>
         <header>
             <Supreme>{me.name}'s Cart</Supreme>
         </header>
+        <CloseButton onClick={closeCart}>&times;</CloseButton>
         <ul>
             {
-                me.cart.map(cartItem => <CartItem key={cartItem.id} cartItem={cartItem} />)
+                me.cart.map((cartItem) => <CartItem key={cartItem.id} cartItem={cartItem} />)
             }
         </ul>
         <footer>
