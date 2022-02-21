@@ -9,6 +9,7 @@ import CloseButton from './styles/CloseButton';
 import RemoveFromCart from './RemoveFromCart';
 import gql from 'graphql-tag';
 import { useMutation } from '@apollo/client';
+import Checkout from './Checkout';
 
 const CartItemStyles = styled.li`
   padding: 1rem 0;
@@ -71,6 +72,7 @@ const Cart = () => {
         </ul>
         <footer>
             <p>{millify(calcTotalPrice(me.cart))}</p>
+            <Checkout/>
         </footer>
     </CartStyles>
   )
